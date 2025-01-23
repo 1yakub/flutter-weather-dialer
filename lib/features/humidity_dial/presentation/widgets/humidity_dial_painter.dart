@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+/// A custom painter that draws a circular dial with tick marks, progress arc, and optional checkmark
+/// This can be used for displaying humidity or any other percentage-based metric
 class HumidityDialPainter extends CustomPainter {
-  final double progress;
-  final Color progressColor;
-  final Color backgroundColor;
-  final double strokeWidth;
-  final bool showCheckmark;
+  // Core parameters that control the dial's appearance and behavior
+  final double progress; // Value between 0.0 and 1.0 (0% to 100%)
+  final Color progressColor; // Color for active elements (arc, ticks)
+  final Color backgroundColor; // Color for inactive elements
+  final double strokeWidth; // Thickness of the main arcs
+  final bool showCheckmark; // Whether to show the checkmark indicator
 
+  /// Constructor with customizable parameters
+  /// [progress]: The current value (0.0 to 1.0)
+  /// [progressColor]: Color for active elements (default: green)
+  /// [backgroundColor]: Color for inactive elements (default: light gray)
+  /// [strokeWidth]: Thickness of the arcs (default: 10)
+  /// [showCheckmark]: Show checkmark when in optimal range (default: true)
   HumidityDialPainter({
     required this.progress,
     this.progressColor = Colors.green,
@@ -18,10 +27,11 @@ class HumidityDialPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Calculate center point and radius for the dial
     final center = Offset(size.width / 2, size.height / 2);
     final radius = math.min(size.width, size.height) / 2 - strokeWidth;
 
-    // Setup paints
+    // Setup paint styles for background and progress arcs
     final backgroundPaint = Paint()
       ..color = backgroundColor
       ..strokeWidth = strokeWidth
@@ -34,16 +44,18 @@ class HumidityDialPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    // Draw background arc (270 degrees, starting from -225)
+    // Draw the background arc (270 degrees, starting from -225)
+    // This creates the inactive portion of the dial
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
-      -225 * math.pi / 180, // Start angle in radians
-      270 * math.pi / 180, // Sweep angle in radians
+      -225 * math.pi / 180, // Start at -225 degrees
+      270 * math.pi / 180, // Sweep 270 degrees
       false,
       backgroundPaint,
     );
 
-    // Draw progress arc
+    // Draw the progress arc
+    // This shows the active portion based on the progress value
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       -225 * math.pi / 180,
@@ -52,39 +64,45 @@ class HumidityDialPainter extends CustomPainter {
       progressPaint,
     );
 
-    // Draw tick marks
+    // Draw the tick marks around the dial
     _drawTickMarks(canvas, center, radius, size);
 
-    // Draw checkmark if needed
+    // Draw checkmark if enabled and progress is in optimal range (40-60%)
     if (showCheckmark && progress >= 0.4 && progress <= 0.6) {
       _drawCheckmark(canvas, center, radius);
     }
   }
 
+  /// Draws the tick marks around the dial
+  /// - 27 evenly spaced ticks
+  /// - Active ticks use progressColor
+  /// - Inactive ticks use gray
+  /// - Last active tick is slightly longer
   void _drawTickMarks(Canvas canvas, Offset center, double radius, Size size) {
     final tickPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 1.5; // Make all ticks thinner and more delicate
+      ..strokeWidth = 1.5; // Thin, delicate tick marks
 
-    // Calculate the last active tick index based on progress
+    // Calculate which tick should be the last active one
     final activeTickIndex = (progress * 27).floor();
 
+    // Draw 27 tick marks evenly spaced around the dial
     for (int i = 0; i < 27; i++) {
-      final angle = -225 + (i * 10); // 270 degrees divided into 27 parts
+      final angle = -225 + (i * 10); // Space ticks every 10 degrees
       final angleInRadians = angle * math.pi / 180;
 
       // Determine if this is the last active tick
       final isLastActiveTick = i == activeTickIndex;
 
-      // Set color based on active state
+      // Set color based on whether tick is active
       tickPaint.color =
           i <= activeTickIndex ? progressColor : Colors.grey[300]!;
 
-      // Adjust length based on whether it's the last active tick
-      final inwardExtension =
-          isLastActiveTick ? 8.0 : 6.0; // Last tick slightly longer
+      // Make the last active tick slightly longer
+      final inwardExtension = isLastActiveTick ? 8.0 : 6.0;
 
+      // Calculate tick start and end points
       final innerPoint = Offset(
         center.dx + (radius - inwardExtension) * math.cos(angleInRadians),
         center.dy + (radius - inwardExtension) * math.sin(angleInRadians),
@@ -98,6 +116,8 @@ class HumidityDialPainter extends CustomPainter {
     }
   }
 
+  /// Draws the checkmark indicator when progress is in optimal range
+  /// The checkmark appears at the bottom of the dial
   void _drawCheckmark(Canvas canvas, Offset center, double radius) {
     final checkmarkPaint = Paint()
       ..color = progressColor
@@ -106,15 +126,15 @@ class HumidityDialPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final checkmarkPath = Path();
-    final checkmarkSize = radius * 0.3;
+    final checkmarkSize = radius * 0.3; // Checkmark size relative to dial
 
-    // Calculate checkmark position at the bottom of the circle
+    // Position checkmark at the bottom of the dial
     final checkmarkCenter = Offset(
       center.dx,
       center.dy + radius - checkmarkSize,
     );
 
-    // Draw checkmark
+    // Draw the checkmark using a path
     checkmarkPath.moveTo(
       checkmarkCenter.dx - checkmarkSize / 2,
       checkmarkCenter.dy,

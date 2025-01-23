@@ -1,7 +1,24 @@
+/// Main page widget that displays the humidity dial and related information.
+/// This page provides a complete view of humidity metrics with navigation and editing capabilities.
+///
+/// Features:
+/// - App bar with back navigation and edit button
+/// - Last updated timestamp display
+/// - Scrollable container for the humidity dial
+/// - Clean, modern Material Design layout
+///
+/// To customize this page:
+/// 1. Update the app bar title and actions
+/// 2. Modify the layout and styling
+/// 3. Add additional widgets or functionality
+/// 4. Implement the edit button functionality
 import 'package:flutter/material.dart';
 import '../widgets/humidity_dial.dart';
 
+/// A stateless widget that serves as the main page for displaying the humidity dial.
+/// This page follows Material Design guidelines and provides a clean user interface.
 class HumidityDialPage extends StatelessWidget {
+  /// Creates a new instance of [HumidityDialPage].
   const HumidityDialPage({super.key});
 
   @override
@@ -15,7 +32,10 @@ class HumidityDialPage extends StatelessWidget {
         title: const Text('Little Gem'),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              // TODO: Implement edit functionality
+              // This could open a dialog or navigate to an edit page
+            },
             child: const Text('EDIT'),
           ),
         ],
@@ -24,6 +44,7 @@ class HumidityDialPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
+            // Last updated timestamp banner
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8),
               color: Colors.grey[100],
@@ -37,6 +58,7 @@ class HumidityDialPage extends StatelessWidget {
                 ),
               ),
             ),
+            // Main content area with humidity dial
             const Expanded(
               child: SingleChildScrollView(
                 child: Padding(

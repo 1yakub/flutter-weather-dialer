@@ -1,3 +1,27 @@
+/// A customizable circular dial widget that displays humidity information with a progress indicator.
+/// This widget shows both the current humidity and a 72-hour average with a visually appealing
+/// circular progress bar and tick marks.
+///
+/// Key features:
+/// - Circular progress indicator with customizable tick marks
+/// - Display of average humidity with percentage
+/// - 72-hour average label
+/// - Checkmark indicator for status
+/// - Customizable colors and styling
+///
+/// Example usage:
+/// ```dart
+/// HumidityDialWidget(
+///   averageHumidity: 45.0,
+///   currentHumidity: 44.0,
+/// )
+/// ```
+///
+/// To modify this widget for other metrics:
+/// 1. Rename the class and parameters to match your metric
+/// 2. Adjust the color scheme in the build method
+/// 3. Update the labels and formatting in the Text widgets
+/// 4. Modify the progress calculation if needed
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -102,6 +126,13 @@ class HumidityDialWidget extends StatelessWidget {
   }
 }
 
+/// Custom painter that draws the circular progress indicator with tick marks.
+/// This class handles the actual drawing of the dial's visual elements.
+///
+/// Key customization points:
+/// - [totalBars]: Number of tick marks around the dial (default: 100)
+/// - Colors: Modify the Paint colors in the paint method
+/// - Dimensions: Adjust barWidth, barHeight, and radius calculations
 class HumidityProgressPainter extends CustomPainter {
   final double progress;
   static const int totalBars = 100;
@@ -169,7 +200,13 @@ class HumidityProgressPainter extends CustomPainter {
   }
 }
 
-// Usage example widget
+/// Example widget demonstrating how to use the HumidityDialWidget with additional metrics
+/// and a details button. This can be used as a template for implementing similar widgets.
+///
+/// Features:
+/// - Displays the humidity dial
+/// - Shows a details button
+/// - Lists additional metrics like temperature and battery life
 class HumidityDisplay extends StatelessWidget {
   const HumidityDisplay({Key? key}) : super(key: key);
 
